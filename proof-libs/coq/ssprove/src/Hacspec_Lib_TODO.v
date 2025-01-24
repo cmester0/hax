@@ -425,6 +425,489 @@ Notation "'matchb' x 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h 
                       | e => f
                       | g => h end)) (at level 100, a pattern, c pattern, e pattern, g pattern).
 
+Notation "'matchb' x 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j 'end'" :=
+  (bind_both x (fun y => match y with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern).
+
+Notation "'matchb' x 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l 'end'" :=
+  (bind_both x (fun y => match y with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern).
+
+Notation "'matchb' x 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n 'end'" :=
+  (bind_both x (fun y => match y with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern).
+
+Notation "'matchb' x 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p 'end'" :=
+  (bind_both x (fun y => match y with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern).
+
+Notation "'matchb' x 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r 'end'" :=
+  (bind_both x (fun y => match y with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern).
+
+Notation "'matchb' x 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t 'end'" :=
+  (bind_both x (fun y => match y with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern).
+
+Notation "'matchb' x 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v 'end'" :=
+  (bind_both x (fun y => match y with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x 'end'" :=
+  (bind_both x_val (fun y => match y with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 '|' i1 '=>' j1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1
+                      | i1 => j1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern, i1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 '|' i1 '=>' j1 '|' k1 '=>' l1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1
+                      | i1 => j1
+                      | k1 => l1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern, i1 pattern, k1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 '|' i1 '=>' j1 '|' k1 '=>' l1 '|' m1 '=>' n1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1
+                      | i1 => j1
+                      | k1 => l1
+                      | m1 => n1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern, i1 pattern, k1 pattern, m1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 '|' i1 '=>' j1 '|' k1 '=>' l1 '|' m1 '=>' n1 '|' o1 '=>' p1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1
+                      | i1 => j1
+                      | k1 => l1
+                      | m1 => n1
+                      | o1 => p1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern, i1 pattern, k1 pattern, m1 pattern, o1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 '|' i1 '=>' j1 '|' k1 '=>' l1 '|' m1 '=>' n1 '|' o1 '=>' p1 '|' q1 '=>' r1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1
+                      | i1 => j1
+                      | k1 => l1
+                      | m1 => n1
+                      | o1 => p1
+                      | q1 => r1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern, i1 pattern, k1 pattern, m1 pattern, o1 pattern, q1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 '|' i1 '=>' j1 '|' k1 '=>' l1 '|' m1 '=>' n1 '|' o1 '=>' p1 '|' q1 '=>' r1 '|' s1 '=>' t1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1
+                      | i1 => j1
+                      | k1 => l1
+                      | m1 => n1
+                      | o1 => p1
+                      | q1 => r1
+                      | s1 => t1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern, i1 pattern, k1 pattern, m1 pattern, o1 pattern, q1 pattern, s1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 '|' i1 '=>' j1 '|' k1 '=>' l1 '|' m1 '=>' n1 '|' o1 '=>' p1 '|' q1 '=>' r1 '|' s1 '=>' t1 '|' u1 '=>' v1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1
+                      | i1 => j1
+                      | k1 => l1
+                      | m1 => n1
+                      | o1 => p1
+                      | q1 => r1
+                      | s1 => t1
+                      | u1 => v1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern, i1 pattern, k1 pattern, m1 pattern, o1 pattern, q1 pattern, s1 pattern, u1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 '|' i1 '=>' j1 '|' k1 '=>' l1 '|' m1 '=>' n1 '|' o1 '=>' p1 '|' q1 '=>' r1 '|' s1 '=>' t1 '|' u1 '=>' v1 '|' w1 '=>' x1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1
+                      | i1 => j1
+                      | k1 => l1
+                      | m1 => n1
+                      | o1 => p1
+                      | q1 => r1
+                      | s1 => t1
+                      | u1 => v1
+                      | w1 => x1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern, i1 pattern, k1 pattern, m1 pattern, o1 pattern, q1 pattern, s1 pattern, u1 pattern, w1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 '|' i1 '=>' j1 '|' k1 '=>' l1 '|' m1 '=>' n1 '|' o1 '=>' p1 '|' q1 '=>' r1 '|' s1 '=>' t1 '|' u1 '=>' v1 '|' w1 '=>' x1 '|' y1 '=>' z1 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1
+                      | i1 => j1
+                      | k1 => l1
+                      | m1 => n1
+                      | o1 => p1
+                      | q1 => r1
+                      | s1 => t1
+                      | u1 => v1
+                      | w1 => x1
+                      | y1 => z1 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern, i1 pattern, k1 pattern, m1 pattern, o1 pattern, q1 pattern, s1 pattern, u1 pattern, w1 pattern, y1 pattern).
+
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 '|' i1 '=>' j1 '|' k1 '=>' l1 '|' m1 '=>' n1 '|' o1 '=>' p1 '|' q1 '=>' r1 '|' s1 '=>' t1 '|' u1 '=>' v1 '|' w1 '=>' x1 '|' y1 '=>' z1 '|' a2 '=>' b2 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1
+                      | i1 => j1
+                      | k1 => l1
+                      | m1 => n1
+                      | o1 => p1
+                      | q1 => r1
+                      | s1 => t1
+                      | u1 => v1
+                      | w1 => x1
+                      | y1 => z1
+                      | a2 => b2 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern, i1 pattern, k1 pattern, m1 pattern, o1 pattern, q1 pattern, s1 pattern, u1 pattern, w1 pattern, y1 pattern, a2 pattern).
+Notation "'matchb' x_val 'with' '|' a '=>' b '|' c '=>' d '|' e '=>' f '|' g '=>' h '|' i '=>' j '|' k '=>' l '|' m '=>' n '|' o '=>' p '|' q '=>' r '|' s '=>' t '|' u '=>' v '|' w '=>' x '|' y '=>' z '|' a1 '=>' b1 '|' c1 '=>' d1 '|' e1 '=>' f1 '|' g1 '=>' h1 '|' i1 '=>' j1 '|' k1 '=>' l1 '|' m1 '=>' n1 '|' o1 '=>' p1 '|' q1 '=>' r1 '|' s1 '=>' t1 '|' u1 '=>' v1 '|' w1 '=>' x1 '|' y1 '=>' z1 '|' a2 '=>' b2 '|' c2 '=>' d2 'end'" :=
+  (bind_both x_val (fun y_val => match y_val with
+                      | a => b
+                      | c => d
+                      | e => f
+                      | g => h
+                      | i => j
+                      | k => l
+                      | m => n
+                      | o => p
+                      | q => r
+                      | s => t
+                      | u => v
+                      | w => x
+                      | y => z
+                      | a1 => b1
+                      | c1 => d1
+                      | e1 => f1
+                      | g1 => h1
+                      | i1 => j1
+                      | k1 => l1
+                      | m1 => n1
+                      | o1 => p1
+                      | q1 => r1
+                      | s1 => t1
+                      | u1 => v1
+                      | w1 => x1
+                      | y1 => z1
+                      | a2 => b2
+                      | c2 => d2 end)) (at level 100, a pattern, c pattern, e pattern, g pattern, i pattern, k pattern, m pattern, o pattern, q pattern, s pattern, u pattern, w pattern, y pattern, a1 pattern, c1 pattern, e1 pattern, g1 pattern, i1 pattern, k1 pattern, m1 pattern, o1 pattern, q1 pattern, s1 pattern, u1 pattern, w1 pattern, y1 pattern, a2 pattern, c2 pattern).
+
 Notation f_branch := id.
 Notation ControlFlow_Break_case := inr.
 Notation ControlFlow_Continue_case := inl.

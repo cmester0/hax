@@ -3232,6 +3232,11 @@ Definition from_le_bytes {WS : wsize} : (nseq_ int8 (WS / 8)) -> (@int WS) :=
    (fun v => snd (List.fold_right from_be_bytes_fold_fun (((WS / 8) - 1)%nat, @repr WS 0%Z) (array_to_list v))).
 
 (**** Integers to arrays *)
+Definition uint16_to_le_bytes : int16 -> (nseq_ int8 2) := @to_le_bytes U16.
+Definition uint16_to_be_bytes : int16 -> (nseq_ int8 2) := @to_be_bytes U16.
+Definition uint16_from_le_bytes : (nseq_ int8 2) -> int16 := @from_le_bytes U16.
+Definition uint16_from_be_bytes : (nseq_ int8 2) -> int16 := @from_be_bytes U16.
+
 Definition uint32_to_le_bytes : int32 -> (nseq_ int8 4) := @to_le_bytes U32.
 Definition uint32_to_be_bytes : int32 -> (nseq_ int8 4) := @to_be_bytes U32.
 Definition uint32_from_le_bytes : (nseq_ int8 4) -> int32 := @from_le_bytes U32.
@@ -3246,6 +3251,11 @@ Definition uint128_to_le_bytes : int128 -> (nseq_ int8 16) := @to_le_bytes U128.
 Definition uint128_to_be_bytes : int128 -> (nseq_ int8 16) := @to_be_bytes U128.
 Definition uint128_from_le_bytes : (nseq_ int8 16) -> int128 := @from_le_bytes U128.
 Definition uint128_from_be_bytes : (nseq_ int8 16) -> int128 := @from_be_bytes U128.
+
+Definition u16_to_be_bytes : int16 -> (nseq_ int8 2) := @to_be_bytes U16.
+Definition u16_from_be_bytes : (nseq_ int8 2) -> int16 := @from_be_bytes U16.
+Definition u16_to_le_bytes : int16 -> (nseq_ int8 2) := @to_le_bytes U16.
+Definition u16_from_le_bytes : (nseq_ int8 2) -> int16 := @from_le_bytes U16.
 
 Definition u32_to_be_bytes : int32 -> (nseq_ int8 4) := @to_be_bytes U32.
 Definition u32_from_be_bytes : (nseq_ int8 4) -> int32 := @from_be_bytes U32.

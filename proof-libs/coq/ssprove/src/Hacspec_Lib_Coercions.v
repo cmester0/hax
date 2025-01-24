@@ -39,6 +39,10 @@ Open Scope list_scope.
 From Hacspec Require Import Hacspec_Lib_Natmod.
 
 (**** Integers to arrays *)
+Definition uint16_to_le_bytes (n : int16) : both ((nseq_ int8 2)) := ret_both (uint16_to_le_bytes n).
+Definition uint16_to_be_bytes (n : int16) : both ((nseq_ int8 2)) := ret_both (uint16_to_be_bytes n).
+Definition uint16_from_le_bytes (n : (nseq_ int8 2)) : both ((int16)) := ret_both (uint16_from_le_bytes n).
+Definition uint16_from_be_bytes (n : (nseq_ int8 2)) : both ((int16)) := ret_both (uint16_from_be_bytes n).
 Definition uint32_to_le_bytes (n : int32) : both ((nseq_ int8 4)) := ret_both (uint32_to_le_bytes n).
 Definition uint32_to_be_bytes (n : int32) : both ((nseq_ int8 4)) := ret_both (uint32_to_be_bytes n).
 Definition uint32_from_le_bytes (n : (nseq_ int8 4)) : both ((int32)) := ret_both (uint32_from_le_bytes n).
