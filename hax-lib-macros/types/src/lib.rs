@@ -62,6 +62,9 @@ pub enum AssociationRole {
     ProcessWrite,
     ProcessInit,
     ProtocolMessages,
+    Init,
+    Receive,
+    ContractState,
 }
 
 /// Where should a item quote appear?
@@ -97,6 +100,26 @@ pub struct ItemQuote {
     pub fstar_options: Option<ItemQuoteFStarOpts>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "schemars", derive(schemars::JsonSchema))]
+pub struct InitArgs {
+    pub contract : String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "schemars", derive(schemars::JsonSchema))]
+pub struct ReceiveArgs {
+    pub contract : String,
+    pub name : String,
+    pub parameter : Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "schemars", derive(schemars::JsonSchema))]
+pub struct ContractStateArgs {
+    pub contract : String,
+}
+
 /// Hax only understands one attribute: `#[hax::json(PAYLOAD)]` where
 /// `PAYLOAD` is a JSON serialization of an inhabitant of
 /// `AttrPayload`.
@@ -130,6 +153,9 @@ pub enum AttrPayload {
     PVConstructor,
     PVHandwritten,
     TraitMethodNoPrePost,
+    Init(InitArgs),
+    Receive(ReceiveArgs),
+    ContractState(ContractStateArgs),
     /// Make a type opaque
     OpaqueType,
 }

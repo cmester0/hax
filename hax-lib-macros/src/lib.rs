@@ -1021,3 +1021,109 @@ pub fn refinement_type(mut attr: pm::TokenStream, item: pm::TokenStream) -> pm::
     }
     .into()
 }
+
+/// A marker indicating a `fn` as a concordium init function.
+#[proc_macro_error]
+#[proc_macro_attribute]
+pub fn init(attr: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream {
+    let mut contract = "TODO".to_string();
+    let mut iter = attr.into_iter();
+    let ident = iter.next().unwrap();
+    if ident.to_string() == "contract" {
+        iter.next();
+        let value = iter.next().unwrap();
+        contract = value
+            .to_string()
+            .strip_prefix("\"")
+            .unwrap()
+            .strip_suffix("\"")
+            .unwrap()
+            .to_string();
+    } else {
+        panic!();
+    }
+    let item: ItemFn = parse_macro_input!(item);
+    let attr = AttrPayload::Init(InitArgs { contract });
+    quote! {#attr #item}.into()
+}
+
+/// A marker indicating a `fn` as a concordium receive function.
+#[proc_macro_error]
+#[proc_macro_attribute]
+pub fn receive(attr: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream {
+    let mut contract = "TODO".to_string();
+    let mut name = "TODO".to_string();
+    let mut parameter = None;
+    let mut iter = attr.into_iter();
+    while true {
+        let ident = iter.next().unwrap();
+        if ident.to_string() == "contract" {
+            iter.next();
+            let value = iter.next().unwrap();
+            contract = value
+                .to_string()
+                .strip_prefix("\"")
+                .unwrap()
+                .strip_suffix("\"")
+                .unwrap()
+                .to_string();
+        } else if ident.to_string() == "name" {
+            iter.next();
+            let value = iter.next().unwrap();
+            name = value
+                .to_string()
+                .strip_prefix("\"")
+                .unwrap()
+                .strip_suffix("\"")
+                .unwrap()
+                .to_string();
+        } else if ident.to_string() == "parameter" {
+            iter.next();
+            let value = iter.next().unwrap();
+            parameter = Some(value
+                .to_string()
+                .strip_prefix("\"")
+                .unwrap()
+                .strip_suffix("\"")
+                .unwrap()
+                .to_string());
+        } else {
+            break;
+        }
+        if iter.next().is_none() {
+            break;
+        };
+    }
+    let item: ItemFn = parse_macro_input!(item);
+    let attr = AttrPayload::Receive(ReceiveArgs {
+        contract,
+        name,
+        parameter,
+    });
+    quote! {#attr #item}.into()
+}
+
+/// A marker indicating a `struct` as a concordium contract_state function.
+#[proc_macro_error]
+#[proc_macro_attribute]
+pub fn contract_state(attr: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream {
+    let mut contract = "TODO".to_string();
+    let mut iter = attr.into_iter();
+    let ident = iter.next().unwrap();
+    if ident.to_string() == "contract" {
+        iter.next();
+        let value = iter.next().unwrap();
+        contract = value
+            .to_string()
+            .strip_prefix("\"")
+            .unwrap()
+            .strip_suffix("\"")
+            .unwrap()
+            .to_string();
+    } else {
+        panic!();
+    }
+    let item: ItemStruct = parse_macro_input!(item);
+    let attr = AttrPayload::ContractState(ContractStateArgs { contract });
+    quote! {#attr #item}.into()
+}

@@ -58,6 +58,9 @@ module AssocRole = struct
       | ProcessInit
       | ProtocolMessages
       | ItemQuote
+      | Init
+      | Receive
+      | ContractState
     [@@deriving show, yojson, compare, sexp, eq]
   end
 
@@ -79,6 +82,9 @@ module AssocRole = struct
     | ProcessWrite -> ProcessWrite
     | ProcessInit -> ProcessInit
     | ProtocolMessages -> ProtocolMessages
+    | Init -> Init
+    | Receive -> Receive
+    | ContractState -> ContractState
 end
 
 module MakeBase (Error : Phase_utils.ERROR) = struct
