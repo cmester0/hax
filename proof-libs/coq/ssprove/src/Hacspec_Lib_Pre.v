@@ -10,7 +10,7 @@ Require Import Sumbool.
 
 From mathcomp Require Import fintype.
 
-From Crypt Require Import choice_type Package Prelude.
+From SSProve Require Import choice_type Package Prelude.
 Import PackageNotation.
 From extructures Require Import ord fset fmap.
 
@@ -18,7 +18,7 @@ Require Import ChoiceEquality.
 
 From mathcomp Require Import ssrZ word.
 (* From Jasmin Require Import word. *)
-From Crypt Require Import jasmin_word.
+From SSProve Require Import jasmin_word.
 
 
 From Coq Require Import ZArith List.
@@ -1345,7 +1345,8 @@ Proof.
   intros.
   rewrite <- (rev_involutive l).
   induction (rev l).
-  - reflexivity.
+  - unfold seq_len_nat, seq_from_list, fmap_of_seq, mkfmapfp.
+    now rewrite <- fset0E.
   - simpl.
     rewrite seq_from_list_cat.
     rewrite seq.size_cat.
@@ -1486,7 +1487,8 @@ Proof.
   intros.
   rewrite <- (seq.revK t).
   induction (seq.rev t).
-  - reflexivity.
+  - unfold seq_len_nat, seq_from_list, fmap_of_seq, mkfmapfp.
+    now rewrite <- fset0E.
   - simpl.
     rewrite seq.rev_cons.
     set (h := seq.rev l) at 1 ; rewrite <- IHl ; subst h. clear IHl.

@@ -1,7 +1,7 @@
 From Coq Require Import ZArith List.
-From Crypt Require Import choice_type Package.
+From SSProve Require Import choice_type Package.
 Import PackageNotation.
-From Crypt Require Import pkg_interpreter.
+From SSProve Require Import pkg_interpreter.
 From extructures Require Import ord fset fmap.
 From Hacspec Require Import Hacspec_Lib_Comparable.
 
@@ -12,8 +12,8 @@ Import RulesStateProb.
 Import RulesStateProb.RSemanticNotation.
 Open Scope rsemantic_scope.
 
-From Crypt Require Import choice_type Package Prelude.
-From Crypt Require Import Axioms. (* proof_irrelevance *)
+From SSProve Require Import choice_type Package Prelude.
+From SSProve Require Import Axioms. (* proof_irrelevance *)
 Import PackageNotation.
 From extructures Require Import ord fset fmap.
 
