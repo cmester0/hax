@@ -1054,6 +1054,7 @@ pub fn receive(attr: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream 
     let mut contract = "TODO".to_string();
     let mut name = "TODO".to_string();
     let mut parameter = None;
+    let mut generate_instance = false;
     let mut iter = attr.into_iter();
     while true {
         let ident = iter.next().unwrap();
@@ -1087,6 +1088,10 @@ pub fn receive(attr: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream 
                 .strip_suffix("\"")
                 .unwrap()
                 .to_string());
+        } else if ident.to_string() == "generate_instance" {
+            iter.next();
+            let value = iter.next().unwrap();
+            generate_instance = value.to_string() == "true";
         } else {
             break;
         }
@@ -1099,6 +1104,7 @@ pub fn receive(attr: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream 
         contract,
         name,
         parameter,
+        generate_instance,
     });
     quote! {#attr #item}.into()
 }
@@ -1107,7 +1113,7 @@ pub fn receive(attr: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream 
 #[proc_macro_error]
 #[proc_macro_attribute]
 pub fn contract_state(attr: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream {
-    let mut contract = "TODO".to_string();
+    let contract;
     let mut iter = attr.into_iter();
     let ident = iter.next().unwrap();
     if ident.to_string() == "contract" {

@@ -112,6 +112,7 @@ pub struct ReceiveArgs {
     pub contract : String,
     pub name : String,
     pub parameter : Option<String>,
+    pub generate_instance : bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

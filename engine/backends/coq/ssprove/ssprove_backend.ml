@@ -1358,19 +1358,30 @@ struct
     let decls_from_item =
       match e.v with
       | Fn { name = f_name; generics; body; params } ->
-         (if (Attr_payloads.payloads >> List.exists ~f:(fst >> [%matches? Types.Init(_)])) e.attrs
-         then [
-           SSP.AST.Comment "Concert lib part";
-           SSP.AST.Require (Some "ConCert.Utils", [ "Extras" ], None);
-           SSP.AST.Require (Some "ConCert.Utils", [ "Automation" ], None);
-           SSP.AST.Require (Some "ConCert.Execution", [ "Serializable" ], None);
-           SSP.AST.Require (Some "ConCert.Execution", [ "Blockchain" ], None);
-           SSP.AST.Require (Some "ConCert.Execution", [ "ContractCommon" ], None);
-           SSP.AST.Require (Some "ConCert.Execution", [ "Serializable" ], None);
-           SSP.AST.Require (Some "Hacspec", [ "ConCertLib" ], None);
-           ]
-         else []) @
-         List.concat_map ~f:(fun x ->
+         let init_filter =
+           (List.filter_map ~f:(function (Types.Init( init_args ), _) -> Some init_args | _ -> None)
+              (Attr_payloads.payloads e.attrs))
+         in
+         let receive_filter =
+           (List.filter_map ~f:(function (Types.Receive( receive_args ), _) -> Some receive_args | _ -> None)
+              (Attr_payloads.payloads e.attrs))
+         in
+         let import_if_first_init =
+           (if (Attr_payloads.payloads >> List.exists ~f:(fst >> [%matches? Types.Init(_)])) e.attrs
+           then [
+               SSP.AST.Comment "Concert lib part";
+               SSP.AST.Require (Some "ConCert.Utils", [ "Extras" ], None);
+               SSP.AST.Require (Some "ConCert.Utils", [ "Automation" ], None);
+               SSP.AST.Require (Some "ConCert.Execution", [ "Serializable" ], None);
+               SSP.AST.Require (Some "ConCert.Execution", [ "Blockchain" ], None);
+               SSP.AST.Require (Some "ConCert.Execution", [ "ContractCommon" ], None);
+               SSP.AST.Require (Some "ConCert.Execution", [ "Serializable" ], None);
+               SSP.AST.Require (Some "Hacspec", [ "ConCertLib" ], None);
+             ]
+           else [])
+         in
+         let init_concert =
+           List.concat_map ~f:(fun x ->
              [
                SSP.AST.Definition
                  ( "init_" ^ x.contract,
@@ -1394,13 +1405,15 @@ struct
                  ] ) );
              ]
            )
-           (List.filter_map ~f:(function (Types.Init( init_args ), _) -> Some init_args | _ -> None)
-              (Attr_payloads.payloads e.attrs)) @
-         List.concat_map ~f:(fun x ->
-             let param_instances, param_list, count, param_vars =
-               match x.parameter with
-               | Some x ->
-                  ( [
+             init_filter
+         in
+         let has_receive_context =
+           List.concat_map ~f:(fun x ->
+               if x.generate_instance
+               then
+                 match x.parameter with
+                 | Some x ->
+                    [
                       SSP.AST.ProgramInstance
                         ( "t_HasReceiveContext",
                           [],
@@ -1433,127 +1446,86 @@ struct
                             (SSP.AST.Lambda
                                ([ SSP.AST.Ident "x" ], SSP.AST.Var "x"))
                         );
-                    ],
-                    [
-                      SSP.AST.Explicit
-                        ( SSP.AST.Ident "ctx",
-                          SSPExtraDefinitions.wrap_type_in_both
-                            (* "L0" *)
-                            (* "I0" *)
-                            (SSP.AST.NameTy ("t_" ^ strip x)) );
-                    ],
-                    1,
-                    [ SSP.AST.Var "ctx" ] )
-               | _ -> ([], [], 0, [])
-             in
-             param_instances
-         )
-         (List.filter_map ~f:(function (Types.Receive( receive_args ), _) -> Some receive_args | _ -> None)
-            (Attr_payloads.payloads e.attrs)) @
-          [
-              (let args, ret_typ =
-                 lift_definition_type_to_both f_name
-                   (pgeneric span generics
+                    ]
+                 | _ -> []
+               else []
+             )
+             receive_filter
+         in
+         let receive_vals =
+           List.concat_map ~f:(fun x ->
+               let param_list, count, param_vars =
+                 match x.parameter with
+                 | Some x ->
+                    ( [
+                        SSP.AST.Explicit
+                          ( SSP.AST.Ident "ctx",
+                            SSPExtraDefinitions.wrap_type_in_both
+                              (* "L0" *)
+                              (* "I0" *)
+                              (SSP.AST.NameTy ("t_" ^ strip x)) );
+                      ],
+                      1,
+                      [ SSP.AST.Var "ctx" ] )
+                 | _ -> ([], 0, [])
+               in
+               [
+                 SSP.AST.Definition
+                   ( "receive_" ^ x.contract ^ "_" ^ x.name,
+                     pgeneric e.span generics
+                     @ param_list
+                     @ [
+                         SSP.AST.Explicit
+                           ( SSP.AST.Ident "st",
+                             SSPExtraDefinitions.wrap_type_in_both
+                               (SSP.AST.NameTy ("state_" ^ x.contract)) );
+                       ],
+                     (* Arguments *)
+                     SSP.AST.App
+                       ( SSP.AST.Var (pconcrete_ident f_name)
+                         (* contract *),
+                         param_vars @ [ SSP.AST.Var "st" ] ),
+                     SSPExtraDefinitions.wrap_type_in_both
+                       (SSP.AST.NameTy
+                          ("(t_Result ((v_A × state_" ^ x.contract
+                           ^ ")) (t_ParseError))")) );
+             ])
+             receive_filter
+         in
+         let fn_code =
+           [
+             (let args, ret_typ =
+                lift_definition_type_to_both f_name
+                  (pgeneric span generics
                    @ List.map
                        ~f:(fun { pat; typ; _ } ->
                          SSP.AST.Explicit (ppat pat, pty span typ))
                        params)
-                   (pty span body.typ)
-               in
-               if Attrs.lemma e.attrs
-               then SSP.AST.Lemma ( pconcrete_ident f_name,
-                                    args,
-                                    (pexpr
-                                       (extend_env_with_params
-                                          (Map.empty (module Local_ident))
-                                          (List.map ~f:(fun { pat; _ } -> pat) params))
-                                       true)
-                                      (Option.value ~default:body (Attrs.associated_expr Ensures e.attrs))
-                                  )
-               else SSP.AST.Equations
-                   ( pconcrete_ident f_name,
-                     args,
-                     (pexpr
-                        (extend_env_with_params
-                           (Map.empty (module Local_ident))
-                           (List.map ~f:(fun { pat; _ } -> pat) params))
-                        true)
-                       body,
-                     ret_typ ));
-          ]
-          @ List.concat_map ~f:(fun x ->
-                let param_instances, param_list, count, param_vars =
-                  match x.parameter with
-                  | Some x ->
-                     ( [
-                         SSP.AST.ProgramInstance
-                           ( "t_HasReceiveContext",
-                             [],
-                             SSP.AST.NameTy ("t_" ^ strip x),
-                             [
-                               SSP.AST.NameTy ("t_" ^ strip x);
-                               SSP.AST.Unit;
-                             ],
-                             SSP.AST.InstanceDecls
-                               [
-                                 SSP.AST.InlineDef
-                                   ( "f_get",
-                                     [
-                                       SSP.AST.Implicit
-                                         ( SSP.AST.Ident "Ctx",
-                                           SSP.AST.WildTy );
-                                     ],
-                                     SSP.AST.Var
-                                       "(solve_lift (@ret_both \
-                                        (t_ParamType × t_Result Ctx \
-                                        t_ParseError)) (tt, inr tt))",
-                                     SSP.AST.WildTy );
-                           ] );
-                         SSP.AST.ProgramInstance
-                           ( "t_Sized",
-                             [],
-                             SSP.AST.NameTy ("t_" ^ strip x),
-                             [ SSP.AST.NameTy ("t_" ^ strip x) ],
-                             SSP.AST.TermDef
-                               (SSP.AST.Lambda
-                                  ([ SSP.AST.Ident "x" ], SSP.AST.Var "x"))
-                           );
-                       ],
-                       [
-                         SSP.AST.Explicit
-                           ( SSP.AST.Ident "ctx",
-                             SSPExtraDefinitions.wrap_type_in_both
-                               (* "L0" *)
-                               (* "I0" *)
-                               (SSP.AST.NameTy ("t_" ^ strip x)) );
-                       ],
-                       1,
-                       [ SSP.AST.Var "ctx" ] )
-                  | _ -> ([], [], 0, [])
-                in
-                [
-                  SSP.AST.Definition
-                    ( "receive_" ^ x.contract ^ "_" ^ x.name,
-                      pgeneric e.span generics
-                      @ param_list
-                      @ [
-                          SSP.AST.Explicit
-                            ( SSP.AST.Ident "st",
-                              SSPExtraDefinitions.wrap_type_in_both
-                                (SSP.AST.NameTy ("state_" ^ x.contract)) );
-                        ],
-                      (* Arguments *)
-                      SSP.AST.App
-                        ( SSP.AST.Var (pconcrete_ident f_name)
-                          (* contract *),
-                          param_vars @ [ SSP.AST.Var "st" ] ),
-                      SSPExtraDefinitions.wrap_type_in_both
-                        (SSP.AST.NameTy
-                           ("(t_Result ((v_A × state_" ^ x.contract
-                            ^ ")) (t_ParseError))")) );
-              ])
-         (List.filter_map ~f:(function (Types.Receive( receive_args ), _) -> Some receive_args | _ -> None)
-            (Attr_payloads.payloads e.attrs))
+                  (pty span body.typ)
+              in
+              if Attrs.lemma e.attrs
+              then SSP.AST.Lemma ( pconcrete_ident f_name,
+                                   args,
+                                   (pexpr
+                                      (extend_env_with_params
+                                         (Map.empty (module Local_ident))
+                                         (List.map ~f:(fun { pat; _ } -> pat) params))
+                                      true)
+                                     (Option.value ~default:body (Attrs.associated_expr Ensures e.attrs))
+                     )
+              else SSP.AST.Equations
+                     ( pconcrete_ident f_name,
+                       args,
+                       (pexpr
+                          (extend_env_with_params
+                             (Map.empty (module Local_ident))
+                             (List.map ~f:(fun { pat; _ } -> pat) params))
+                          true)
+                         body,
+                       ret_typ ));
+           ]
+         in
+         import_if_first_init @ init_concert @ has_receive_context @ fn_code @ receive_vals
       | TyAlias { name; generics; ty } ->
           let g = pgeneric span generics in
           [
@@ -1804,8 +1776,8 @@ struct
             SSP.AST.Class
               ( pconcrete_ident name,
                 (match pgeneric span generics with
-| SSP.AST.Implicit (x,y) :: xs -> SSP.AST.Explicit (x,y) :: xs
-| x -> x),
+                | SSP.AST.Implicit (x,y) :: xs -> SSP.AST.Explicit (x,y) :: xs
+                | x -> x),
                 List.concat_map
                   ~f:(fun x ->
                     match x.ti_v with
@@ -1953,145 +1925,145 @@ let cleanup_item_strings =
   >> String.concat ~sep:"\n\n"
 
 module ConCert = struct
-  let translate_concert_annotations
-      m (analysis_data : StaticAnalysis.analysis_data) (e : item) :
-      SSP.AST.decl list =
-    let (module Print) =
-      make m
-        {
-          current_namespace = U.Concrete_ident_view.to_namespace e.ident;
-          analysis_data;
-        }
-    in
-    (* let is_receive : attrs -> bool = *)
-    (*   Attr_payloads.payloads *)
-    (*   >> List.exists ~f:(fst >> [%matches? Types.Receive]) *)
-    (* in *)
+  (* let translate_concert_annotations *)
+  (*     m (analysis_data : StaticAnalysis.analysis_data) (e : item) : *)
+  (*     SSP.AST.decl list = *)
+  (*   let (module Print) = *)
+  (*     make m *)
+  (*       { *)
+  (*         current_namespace = U.Concrete_ident_view.to_namespace e.ident; *)
+  (*         analysis_data; *)
+  (*       } *)
+  (*   in *)
+  (*   (\* let is_receive : attrs -> bool = *\) *)
+  (*   (\*   Attr_payloads.payloads *\) *)
+  (*   (\*   >> List.exists ~f:(fst >> [%matches? Types.Receive]) *\) *)
+  (*   (\* in *\) *)
 
-    (* List.concat_map ~f:(fun x -> [SSP.AST.Unimplemented("Has Receive" ^ x.contract)]) *)
-    (*   (List.filter_map ~f:(function (Types.Receive( receive_args ), _) -> Some receive_args | _ -> None) *)
-    (*      (Attr_payloads.payloads e.attrs)) @ *)
-    match e.v with
-    | Fn { name = f_name; generics; _ } ->
-       List.concat_map ~f:(fun x ->
-           [
-             SSP.AST.Definition
-               ( "init_" ^ x.contract,
-                 [
-                   SSP.AST.Explicit
-                     (SSP.AST.Ident "chain", SSP.AST.NameTy "Chain");
-                   SSP.AST.Explicit
-                     ( SSP.AST.Ident "ctx",
-                       SSP.AST.NameTy "ContractCallContext" );
-                   SSP.AST.Explicit
-                     ( SSP.AST.Ident "st",
-                       SSP.AST.NameTy ("state_" ^ x.contract) );
-                 ],
-                 SSP.AST.App
-                   (SSP.AST.Var "ResultMonad.Ok", [ SSP.AST.Var "st" ]),
-                 SSP.AST.AppTy
-                   ( SSP.AST.NameTy "ResultMonad.result",
-                     [
-                       SSP.AST.NameTy ("state_" ^ x.contract);
-                       SSP.AST.NameTy "t_ParseError";
-               ] ) );
-           ]
-         )
-         (List.filter_map ~f:(function (Types.Init( init_args ), _) -> Some init_args | _ -> None)
-            (Attr_payloads.payloads e.attrs)) @
-         List.concat_map ~f:(fun x ->
-             let param_instances, param_list, count, param_vars =
-               match x.parameter with
-               | Some x ->
-                  ( [
-                      SSP.AST.ProgramInstance
-                        ( "t_HasReceiveContext",
-                          [],
-                          SSP.AST.NameTy ("t_" ^ strip x),
-                          [
-                            SSP.AST.NameTy ("t_" ^ strip x);
-                            SSP.AST.Unit;
-                          ],
-                          SSP.AST.InstanceDecls
-                            [
-                              SSP.AST.InlineDef
-                                ( "f_get",
-                                  [
-                                    SSP.AST.Implicit
-                                      ( SSP.AST.Ident "Ctx",
-                                        SSP.AST.WildTy );
-                                  ],
-                                  SSP.AST.Var
-                                    "(solve_lift (@ret_both \
-                                     (t_ParamType × t_Result _ \
-                                     t_ParseError)) (tt, inr tt))",
-                                  SSP.AST.WildTy );
-                        ] );
-                      SSP.AST.ProgramInstance
-                        ( "t_Sized",
-                          [],
-                          SSP.AST.NameTy ("t_" ^ strip x),
-                          [ SSP.AST.NameTy ("t_" ^ strip x) ],
-                          SSP.AST.TermDef
-                            (SSP.AST.Lambda
-                               ([ SSP.AST.Ident "x" ], SSP.AST.Var "x"))
-                        );
-                    ],
-                    [
-                      SSP.AST.Explicit
-                        ( SSP.AST.Ident "ctx",
-                          SSPExtraDefinitions.wrap_type_in_both
-                            (* "L0" *)
-                            (* "I0" *)
-                            (SSP.AST.NameTy ("t_" ^ strip x)) );
-                    ],
-                    1,
-                    [ SSP.AST.Var "ctx" ] )
-               | _ -> ([], [], 0, [])
-             in
-             param_instances
-             @
-             [
-                 SSP.AST.Definition
-                   ( "receive_" ^ x.contract ^ "_" ^ x.name,
-                     Print.pgeneric e.span generics
-                     @ param_list
-                     @ [
-                         SSP.AST.Explicit
-                           ( SSP.AST.Ident "st",
-                             SSPExtraDefinitions.wrap_type_in_both
-                               (* ("L" ^ Int.to_string count) *)
-                               (* ("I" ^ Int.to_string count) *)
-                               (SSP.AST.NameTy ("state_" ^ x.contract)) );
-                         (* TODO: L, I *)
-                       ],
-                     (* Arguments *)
-                     SSP.AST.App
-                       ( SSP.AST.Var (pconcrete_ident f_name)
-                         (* contract *),
-                         param_vars @ [ SSP.AST.Var "st" ] ),
-                     SSPExtraDefinitions.wrap_type_in_both (* "_" "_" *)
-                       (SSP.AST.NameTy
-                          ("t_Result ((v_A × state_" ^ x.contract
-                           ^ ")) (t_ParseError)")) );
-                 (* TODO: L , I *)
-               ]
-         )
-         (List.filter_map ~f:(function (Types.Receive( receive_args ), _) -> Some receive_args | _ -> None)
-            (Attr_payloads.payloads e.attrs))
-    | Type { name; variants = [ _ ]; is_struct = true; _ } ->
-       List.concat_map ~f:(fun x ->
-           [
-             SSP.AST.Definition
-               ( "state_" ^ x.contract,
-                 [],
-                 SSP.AST.Var (pconcrete_ident name),
-                 SSP.AST.TypeTy );
-           ]
-         )
-         (List.filter_map ~f:(function (Types.ContractState( contract_state_args ), _) -> Some contract_state_args | _ -> None)
-            (Attr_payloads.payloads e.attrs))
-    | _ -> []
+  (*   (\* List.concat_map ~f:(fun x -> [SSP.AST.Unimplemented("Has Receive" ^ x.contract)]) *\) *)
+  (*   (\*   (List.filter_map ~f:(function (Types.Receive( receive_args ), _) -> Some receive_args | _ -> None) *\) *)
+  (*   (\*      (Attr_payloads.payloads e.attrs)) @ *\) *)
+  (*   match e.v with *)
+  (*   | Fn { name = f_name; generics; _ } -> *)
+  (*      List.concat_map ~f:(fun x -> *)
+  (*          [ *)
+  (*            SSP.AST.Definition *)
+  (*              ( "init_" ^ x.contract, *)
+  (*                [ *)
+  (*                  SSP.AST.Explicit *)
+  (*                    (SSP.AST.Ident "chain", SSP.AST.NameTy "Chain"); *)
+  (*                  SSP.AST.Explicit *)
+  (*                    ( SSP.AST.Ident "ctx", *)
+  (*                      SSP.AST.NameTy "ContractCallContext" ); *)
+  (*                  SSP.AST.Explicit *)
+  (*                    ( SSP.AST.Ident "st", *)
+  (*                      SSP.AST.NameTy ("state_" ^ x.contract) ); *)
+  (*                ], *)
+  (*                SSP.AST.App *)
+  (*                  (SSP.AST.Var "ResultMonad.Ok", [ SSP.AST.Var "st" ]), *)
+  (*                SSP.AST.AppTy *)
+  (*                  ( SSP.AST.NameTy "ResultMonad.result", *)
+  (*                    [ *)
+  (*                      SSP.AST.NameTy ("state_" ^ x.contract); *)
+  (*                      SSP.AST.NameTy "t_ParseError"; *)
+  (*              ] ) ); *)
+  (*          ] *)
+  (*        ) *)
+  (*        (List.filter_map ~f:(function (Types.Init( init_args ), _) -> Some init_args | _ -> None) *)
+  (*           (Attr_payloads.payloads e.attrs)) @ *)
+  (*        List.concat_map ~f:(fun x -> *)
+  (*            let param_instances, param_list, count, param_vars = *)
+  (*              match x.parameter with *)
+  (*              | Some x -> *)
+  (*                 ( [ *)
+  (*                     SSP.AST.ProgramInstance *)
+  (*                       ( "t_HasReceiveContext", *)
+  (*                         [], *)
+  (*                         SSP.AST.NameTy ("t_" ^ strip x), *)
+  (*                         [ *)
+  (*                           SSP.AST.NameTy ("t_" ^ strip x); *)
+  (*                           SSP.AST.Unit; *)
+  (*                         ], *)
+  (*                         SSP.AST.InstanceDecls *)
+  (*                           [ *)
+  (*                             SSP.AST.InlineDef *)
+  (*                               ( "f_get", *)
+  (*                                 [ *)
+  (*                                   SSP.AST.Implicit *)
+  (*                                     ( SSP.AST.Ident "Ctx", *)
+  (*                                       SSP.AST.WildTy ); *)
+  (*                                 ], *)
+  (*                                 SSP.AST.Var *)
+  (*                                   "(solve_lift (@ret_both \ *)
+  (*                                    (t_ParamType × t_Result _ \ *)
+  (*                                    t_ParseError)) (tt, inr tt))", *)
+  (*                                 SSP.AST.WildTy ); *)
+  (*                       ] ); *)
+  (*                     SSP.AST.ProgramInstance *)
+  (*                       ( "t_Sized", *)
+  (*                         [], *)
+  (*                         SSP.AST.NameTy ("t_" ^ strip x), *)
+  (*                         [ SSP.AST.NameTy ("t_" ^ strip x) ], *)
+  (*                         SSP.AST.TermDef *)
+  (*                           (SSP.AST.Lambda *)
+  (*                              ([ SSP.AST.Ident "x" ], SSP.AST.Var "x")) *)
+  (*                       ); *)
+  (*                   ], *)
+  (*                   [ *)
+  (*                     SSP.AST.Explicit *)
+  (*                       ( SSP.AST.Ident "ctx", *)
+  (*                         SSPExtraDefinitions.wrap_type_in_both *)
+  (*                           (\* "L0" *\) *)
+  (*                           (\* "I0" *\) *)
+  (*                           (SSP.AST.NameTy ("t_" ^ strip x)) ); *)
+  (*                   ], *)
+  (*                   1, *)
+  (*                   [ SSP.AST.Var "ctx" ] ) *)
+  (*              | _ -> ([], [], 0, []) *)
+  (*            in *)
+  (*            param_instances *)
+  (*            @ *)
+  (*            [ *)
+  (*                SSP.AST.Definition *)
+  (*                  ( "receive_" ^ x.contract ^ "_" ^ x.name, *)
+  (*                    Print.pgeneric e.span generics *)
+  (*                    @ param_list *)
+  (*                    @ [ *)
+  (*                        SSP.AST.Explicit *)
+  (*                          ( SSP.AST.Ident "st", *)
+  (*                            SSPExtraDefinitions.wrap_type_in_both *)
+  (*                              (\* ("L" ^ Int.to_string count) *\) *)
+  (*                              (\* ("I" ^ Int.to_string count) *\) *)
+  (*                              (SSP.AST.NameTy ("state_" ^ x.contract)) ); *)
+  (*                        (\* TODO: L, I *\) *)
+  (*                      ], *)
+  (*                    (\* Arguments *\) *)
+  (*                    SSP.AST.App *)
+  (*                      ( SSP.AST.Var (pconcrete_ident f_name) *)
+  (*                        (\* contract *\), *)
+  (*                        param_vars @ [ SSP.AST.Var "st" ] ), *)
+  (*                    SSPExtraDefinitions.wrap_type_in_both (\* "_" "_" *\) *)
+  (*                      (SSP.AST.NameTy *)
+  (*                         ("t_Result ((v_A × state_" ^ x.contract *)
+  (*                          ^ ")) (t_ParseError)")) ); *)
+  (*                (\* TODO: L , I *\) *)
+  (*              ] *)
+  (*        ) *)
+  (*        (List.filter_map ~f:(function (Types.Receive( receive_args ), _) -> Some receive_args | _ -> None) *)
+  (*           (Attr_payloads.payloads e.attrs)) *)
+  (*   | Type { name; variants = [ _ ]; is_struct = true; _ } -> *)
+  (*      List.concat_map ~f:(fun x -> *)
+  (*          [ *)
+  (*            SSP.AST.Definition *)
+  (*              ( "state_" ^ x.contract, *)
+  (*                [], *)
+  (*                SSP.AST.Var (pconcrete_ident name), *)
+  (*                SSP.AST.TypeTy ); *)
+  (*          ] *)
+  (*        ) *)
+  (*        (List.filter_map ~f:(function (Types.ContractState( contract_state_args ), _) -> Some contract_state_args | _ -> None) *)
+  (*           (Attr_payloads.payloads e.attrs)) *)
+  (*   | _ -> [] *)
 
   let concert_contract_type_decls (items : item list) : SSP.AST.decl list list =
     let contract_items =
