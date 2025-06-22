@@ -1427,14 +1427,13 @@ struct
                               SSP.AST.InlineDef
                                 ( "f_get",
                                   [
-                                    SSP.AST.Implicit
-                                      ( SSP.AST.Ident "Ctx",
+                                    SSP.AST.Explicit
+                                      ( SSP.AST.Ident "ctx",
                                         SSP.AST.WildTy );
                                   ],
                                   SSP.AST.Var
-                                    "(solve_lift (@ret_both \
-                                     (t_ParamType × t_Result Ctx \
-                                     t_ParseError)) (tt, inr tt))",
+                                    ("(solve_lift (@ret_both \
+                                     (t_ParamType × t_Result"  ^ " " ^ ("t_" ^ strip x) ^ " " ^ "t_ParseError)) (tt, inl ctx))"),
                                   SSP.AST.WildTy );
                         ] );
                       SSP.AST.ProgramInstance
@@ -2110,11 +2109,11 @@ module ConCert = struct
                     SSP.AST.InlineDef
                       ( "f_get",
                         [
-                          SSP.AST.Explicit (SSP.AST.Ident "Ctx", SSP.AST.WildTy);
+                          SSP.AST.Explicit (SSP.AST.Ident "ctx", SSP.AST.WildTy);
                         ],
                         SSP.AST.Var
-                          "(solve_lift (@ret_both (t_ParamType × t_Result Ctx \
-                           t_ParseError)) (tt, inr tt))",
+                          ("(solve_lift (@ret_both (t_ParamType × t_Result" ^ " " ^ ("state_" ^ contract) ^ " " ^
+                           "t_ParseError)) (tt, inl ctx))"),
                         SSP.AST.WildTy );
                   ] );
             SSP.AST.ProgramInstance
